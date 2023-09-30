@@ -86,3 +86,15 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+
+class TestImproveStorage(unittest.TestCase):
+    """Test the Improve Stoage Task"""
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_return_object(self):
+        """Test that get returns object"""
+        new_id = uuid.uuid4()
+        name = "Oyo"
+        new_state = State(id=new_id, name=name)
+        storage.add(new_state)
+        self.assertEqual(storage.get(State, new_id).id, new_id)
