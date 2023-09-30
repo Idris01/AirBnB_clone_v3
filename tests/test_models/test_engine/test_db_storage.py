@@ -2,7 +2,7 @@
 """
 Contains the TestDBStorageDocs and TestDBStorage classes
 """
-
+import uuid
 from datetime import datetime
 import inspect
 import models
@@ -90,11 +90,31 @@ class TestFileStorage(unittest.TestCase):
 
 class TestImproveStorage(unittest.TestCase):
     """Test the Improve Stoage Task"""
+
+    @classmethod
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def setUpClass(cls):
+        """Setup functionality to be used for the whole class"""
+        cls.storage = models.storage
+
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_get_return_object(self):
         """Test that get returns object"""
-        new_id = uuid.uuid4()
+        new_id = str(uuid.uuid4())
         name = "Oyo"
         new_state = State(id=new_id, name=name)
-        storage.add(new_state)
-        self.assertEqual(storage.get(State, new_id).id, new_id)
+        self.storage.new(new_state)
+        self.assertEqual(self.storage.get(State, new_id).id, new_id)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_without_id(self):
+        """Test no id supplied"""
+        with self.assertRaises(TypeError):
+            new_state = State(id=str(uuid.uuid4()), name="Ogbomoso")
+            models.storage.get(new_state)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get_return_none_id_not_present(self):
+        """Test return none when id not present"""
+        new_id = str(uuid.uuid4())
+        self.assertEqual(self.storage.get(State, new_id), None)
