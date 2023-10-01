@@ -2,7 +2,7 @@
 """
 Contains the TestFileStorageDocs classes
 """
-
+import uuid
 from datetime import datetime
 import inspect
 import models
@@ -113,3 +113,40 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+
+class TestImproveStorage(unittest.TestCase):
+    """Test the get and count functionality of the file storage
+    """
+
+    @classmethod
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def setUpClass(cls):
+        """Setup the test class"""
+        cls.storage = FileStorage()
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_return_correct(self):
+        """Test that get method gets the required"""
+        state_id = str(uuid.uuid4())
+        state_name = "Osun"
+
+        self.assertEqual(self.storage.get(State, state_id), None)
+        new_state = State(id=state_id, name=state_name)
+        self.storage.new(new_state)
+        self.assertEqual(self.storage.get(State, state_id).id, state_id)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get_without_id_raises_exception(self):
+        """Test that get raises exception if id is not present"""
+        with self.assertRaises(TypeError):
+            self.storage.get(City)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_method(self):
+        """Test the count method of the storage"""
+        initial_count = self.storage.count()
+        self.storage.new(State())
+        self.assertEqual(
+                initial_count + 1,
+                self.storage.count())
