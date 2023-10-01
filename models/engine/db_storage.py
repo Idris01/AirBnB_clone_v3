@@ -51,6 +51,14 @@ class DBStorage:
                     new_dict[key] = obj
         return (new_dict)
 
+    def get(self, cls, id):
+        """get item item of type cls with a given id"""
+        items_of_cls = self.all(cls)
+        for key, value in items_of_cls.items():
+            if key.split('.')[-1] == id:
+                return value
+        return None
+
     def new(self, obj):
         """add the object to the current database session"""
         self.__session.add(obj)
