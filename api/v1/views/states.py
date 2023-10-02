@@ -7,8 +7,12 @@ from models.state import State
 
 state_methods = ['GET', 'POST', 'PUT', 'DELETE']
 
+
 @app_views.route('/states', methods=state_methods, strict_slashes=False)
-@app_views.route('/states/<state_id>',methods=state_methods, strict_slashes=False)
+@app_views.route(
+        '/states/<state_id>',
+        methods=state_methods,
+        strict_slashes=False)
 def states(state_id=None):
     """Get state representation with a given id
 
@@ -58,7 +62,6 @@ def post_state():
         return make_response(
                 jsonify(new_state.to_dict()), 201)
     except Exception as e:
-        print(e)
         return make_response(jsonify({"error": "Not a JSON"}), 400)
 
 
@@ -80,7 +83,5 @@ def update_state(state_id=None):
         state.save()
         return make_response(jsonify(state.to_dict()), 200)
 
-    except exeption as e:
-        print(e)
+    except Exception as e:
         return make_response(jsonify({"error": "Not a JSON"}), 400)
-
