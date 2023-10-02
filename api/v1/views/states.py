@@ -48,6 +48,7 @@ def delete_state(state_id=None):
     if not state:
         abort(404)
     state.delete()
+    storage.save()
     return make_response(jsonify({}), 200)
 
 
@@ -71,15 +72,11 @@ def update_state(state_id=None):
     if state is None:
         abort(404)
     try:
+        to_ignore = ('id', 'created_at', 'updated_at')
         state_data = request.get_json()
-        if 'id' in state_data:
-            del state_data['id']
-        if 'created_at' in state_data:
-            del state_data['created_at']
-        if 'updated_at' in state_data:
-            del state_data['updated_at']
-
-        state.update(**state_data)
+        for key, value in state_data.items():
+            if key not in to_ignore:
+                setattr(state, key, value)
         state.save()
         return make_response(jsonify(state.to_dict()), 200)
 
