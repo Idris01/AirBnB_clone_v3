@@ -118,3 +118,28 @@ class TestImproveStorage(unittest.TestCase):
         """Test return none when id not present"""
         new_id = str(uuid.uuid4())
         self.assertEqual(self.storage.get(State, new_id), None)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_db_storage_count_is_integer(self):
+        """Test the count method of the db_storage"""
+        self.assertTrue(isinstance(
+            self.storage.count(),
+            int))
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_db_storage_count_correct(self):
+        """Test that the number of count return is correct
+        """
+        storage = self.storage
+        state_count = storage.count(State)
+        new_state = State(id=str(uuid.uuid4()), name="Lagos")
+        storage.new(new_state)
+        count_after_update = storage.count(State)
+        self.assertEqual(state_count + 1, count_after_update)
+
+        new_city = City(state_id=new_state.id, name="Ikorodu")
+        total_count = storage.count()
+        city_count = storage.count(City)
+        storage.new(new_city)
+        self.assertEqual(total_count + 1, storage.count())
+        self.assertEqual(city_count + 1, storage.count(City))
