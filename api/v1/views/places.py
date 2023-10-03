@@ -34,6 +34,7 @@ def city_place_list_create(city_id):
             return make_response(
                     jsonify({"error": "Missing name"}), 400)
 
+        data['city_id'] = city_id
         place = Place(**data)
         place.save()
         return make_response(
