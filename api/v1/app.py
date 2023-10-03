@@ -2,7 +2,7 @@
 """This module starts a simple flask app
 """
 import os
-from flask import Flask
+from flask import Flask, make_response, jsonify
 from models import storage
 from api.v1.views import app_views
 
@@ -13,6 +13,11 @@ HBNB_API_HOST = os.getenv(
         '0.0.0.0')
 HBNB_API_PORT = int(
         os.getenv("HBNB_API_PORT", "5000"))
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({"error": "Not found"}), 404)
 
 
 @app.teardown_appcontext
