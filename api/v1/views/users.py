@@ -37,7 +37,6 @@ def del_user(user_id):
 def post_user():
     """Returns the new User with the status code 201"""
     try:
-
         new_user = request.get_json()
         if 'email' not in new_user:
             return make_response(
