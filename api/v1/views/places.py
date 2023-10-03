@@ -62,7 +62,9 @@ def place_retrieve_delete_update(place_id):
     else:
         try:
             data = request.get_json()
-            to_ignore = ('id', 'user_id', 'city_id', 'created_at', 'updated_at')
+            to_ignore = (
+                    'id', 'user_id', 'city_id',
+                    'created_at', 'updated_at')
             for key, value in data.items():
                 if key not in to_ignore:
                     setattr(place, key, value)
