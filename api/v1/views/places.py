@@ -28,8 +28,7 @@ def city_place_list_create(city_id):
                     jsonify({"error": "Missing user_id"}), 400)
         user = storage.get(User, data.get("user_id"))
         if not user or user is None:
-            abort(404)
-
+            raise Exception("404")
         if data.get("name") is None:
             return make_response(
                     jsonify({"error": "Missing name"}), 400)
@@ -41,6 +40,8 @@ def city_place_list_create(city_id):
                 jsonify(place.to_dict()), 201)
 
     except Exception as e:
+        if '404' in str(e):
+            abort(404)
         return make_response(jsonify({"error": "Not a JSON"}), 400)
 
 
